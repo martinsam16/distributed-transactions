@@ -2,11 +2,23 @@ server:
   port: 3030
 
 spring:
+  application:
+    name: Catalog Products Microservice
+    version: 1.0.0
+    author: Martin Saman
   data:
     mongodb:
       uri: mongodb+srv://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@clusterfree.fvpary6.mongodb.net/?retryWrites=true&w=majority
       ssl-enabled: true
       database: ${MONGODB_DATABASE}
+
+springdoc:
+  api-docs:
+    path: /api-docs
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
 
 management:
   endpoints:
