@@ -1,0 +1,37 @@
+server:
+  port: 3030
+
+spring:
+  data:
+    mongodb:
+      uri: mongodb+srv://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@clusterfree.fvpary6.mongodb.net/?retryWrites=true&w=majority
+      ssl-enabled: true
+      database: ${MONGODB_DATABASE}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics, prometheus, readiness, liveness
+  endpoint:
+    health:
+      show-details: always
+      group:
+        readiness:
+          include: mongo, kafka
+        liveness:
+          include: livenessState
+      probes:
+        enabled: true
+      status:
+        http-mapping:
+          DOWN: 503
+        order:
+          - UP
+          - OUT_OF_SERVICE
+          - DOWN
+      components:
+        mongo:
+          enabled: true
+        kafka:
+          enabled: true
