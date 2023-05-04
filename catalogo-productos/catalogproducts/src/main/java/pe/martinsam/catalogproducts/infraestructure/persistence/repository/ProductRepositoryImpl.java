@@ -2,6 +2,7 @@ package pe.martinsam.catalogproducts.infraestructure.persistence.repository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import pe.martinsam.catalogproducts.domain.model.product.Product;
 import pe.martinsam.catalogproducts.domain.repository.ProductRepository;
 import pe.martinsam.catalogproducts.infraestructure.persistence.dao.ProductDao;
@@ -12,6 +13,7 @@ import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
+@Transactional
 public class ProductRepositoryImpl implements ProductRepository {
 
     private final ProductDao productDao;

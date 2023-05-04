@@ -2,7 +2,6 @@ package pe.martinsam.catalogproducts.application;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.common.errors.ClusterAuthorizationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pe.martinsam.catalogproducts.application.exception.ProductException;
@@ -34,13 +33,10 @@ public class ProductService {
                         () -> log.info("Product not exists"));
 
         final Product savedProduct = productRepository.save(productDto.toProduct());
-        try {
-            productCreateProducer.sendProductCreatedEvent(ProductCreatedEvent.fromProduct(savedProduct));
-        } catch (Exception e) {
-            log.error("Error publishing event to Kafka: {}", e.getMessage());
-            productRepository.deleteById(savedProduct.getId());
-            throw e;
-        }
+        log.info("Product saved: {}", savedProduct);
+
+        productCreateProducer.sendProductCreatedEvent(ProductCreatedEvent.fromProduct(savedProduct));
+
         return savedProduct;
     }
 
