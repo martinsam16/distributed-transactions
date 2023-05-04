@@ -5,11 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pe.martinsam.catalogproducts.application.ProductService;
 import pe.martinsam.catalogproducts.domain.model.product.Product;
 import pe.martinsam.catalogproducts.domain.model.product.dto.CreateProductDto;
@@ -29,6 +25,18 @@ public class ProductRest {
     @ApiOperation("Obtener todos los productos")
     public List<GetProductDto> getAllProducts() {
         return productService.getAllProducts();
+    }
+
+    @GetMapping("/count")
+    @ApiOperation("Cantidad total de productos")
+    public Long count() {
+        return productService.countProducts();
+    }
+
+    @GetMapping("/count/{sellerId}")
+    @ApiOperation("Cantidad total de productos por vendedor")
+    public Long countBySellerId(@PathVariable String sellerId) {
+        return productService.countProductsBySellerId(sellerId);
     }
 
     @PostMapping

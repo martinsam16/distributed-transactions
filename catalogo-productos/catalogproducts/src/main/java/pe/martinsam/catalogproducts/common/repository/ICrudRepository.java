@@ -3,7 +3,7 @@ package pe.martinsam.catalogproducts.common.repository;
 import java.util.List;
 import java.util.Optional;
 
-public interface CrudRepository <T, ID>{
+public interface ICrudRepository<T, ID>{
     Optional<List<T>> findAll();
     Optional<T> findById(ID id);
     Optional<T> findByNameAndSellerId(String name, String sellerId);
@@ -11,4 +11,5 @@ public interface CrudRepository <T, ID>{
     T save(T entity);
     void deleteById(ID id);
     Long count();
+    Long countBySellerId(String sellerId);
 }

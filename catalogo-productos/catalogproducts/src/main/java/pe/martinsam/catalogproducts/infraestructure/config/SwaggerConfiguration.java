@@ -1,4 +1,4 @@
-package pe.martinsam.catalogproducts.common.configs;
+package pe.martinsam.catalogproducts.infraestructure.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,7 +11,6 @@ import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @Configuration
-//@EnableSwagger2
 public class SwaggerConfiguration  {
 
     @Bean
@@ -22,14 +21,5 @@ public class SwaggerConfiguration  {
                 .paths(PathSelectors.any())
                 .build();
     }
-
-    /*@Override
-    protected void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("swagger-ui.html")
-                .addResourceLocations("classpath:/META-INF/resources/");
-
-        registry.addResourceHandler("/webjars/**")
-                .addResourceLocations("classpath:/META-INF/resources/webjars/");
-    }*/
 }
 

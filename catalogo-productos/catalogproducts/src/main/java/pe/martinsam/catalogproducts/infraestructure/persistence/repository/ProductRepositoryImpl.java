@@ -50,4 +50,9 @@ public class ProductRepositoryImpl implements ProductRepository {
     public Long count() {
         return productDao.count();
     }
+
+    @Override
+    public Long countBySellerId(String sellerId) {
+        return productDao.countBySellerId(sellerId);
+    }
 }
