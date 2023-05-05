@@ -2,12 +2,17 @@ package pe.martinsam.catalogproducts.infraestructure.rest.handler;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import pe.martinsam.catalogproducts.application.exception.ProductException;
+import pe.martinsam.catalogproducts.common.infraestructure.rest.handler.dto.ErrorRestHandlerDto;
+
+import java.time.LocalDateTime;
+
 
 @ControllerAdvice
 public class RestResponseEntityExceptionHandler
@@ -17,15 +22,15 @@ public class RestResponseEntityExceptionHandler
             ProductException.class
     })
     protected ResponseEntity<Object> handleConflictProduct(RuntimeException ex, WebRequest request) {
-        return handleExceptionInternal(ex, ex.getMessage(),
-                new HttpHeaders(), HttpStatus.CONFLICT, request);
+        ErrorRestHandlerDto body = new ErrorRestHandlerDto(
+                LocalDateTime.now().toString(),
+                HttpStatus.CONFLICT.value(),
+                ex.getLocalizedMessage(),
+                ex.getMessage(),
+                request.getDescription(false).replace("uri=", "")
+        );
+
+        return new ResponseEntity<>(body, null, HttpStatus.CONFLICT);
     }
 
-    @ExceptionHandler({
-            Exception.class
-    })
-    protected ResponseEntity<Object> handleConflictServer(RuntimeException ex, WebRequest request) {
-        return handleExceptionInternal(ex, ex.getMessage(),
-                new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
-    }
 }

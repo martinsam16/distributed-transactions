@@ -2,10 +2,13 @@ package pe.martinsam.catalogproducts.infraestructure.rest;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import pe.martinsam.catalogproducts.application.ProductService;
 import pe.martinsam.catalogproducts.domain.model.product.Product;
 import pe.martinsam.catalogproducts.domain.model.product.dto.CreateProductDto;
@@ -23,28 +26,41 @@ public class ProductRest {
 
     @GetMapping
     @ApiOperation("Obtener todos los productos")
-    public List<GetProductDto> getAllProducts() {
-        return productService.getAllProducts();
+    public ResponseEntity<List<GetProductDto>> getAllProducts() {
+        return ResponseEntity.ok(productService.getAllProducts());
     }
 
     @GetMapping("/count")
     @ApiOperation("Cantidad total de productos")
-    public Long count() {
-        return productService.countProducts();
+    public ResponseEntity<Long> count() {
+        return ResponseEntity.ok(productService.countProducts());
     }
 
     @GetMapping("/count/{sellerId}")
     @ApiOperation("Cantidad total de productos por vendedor")
-    public Long countBySellerId(@PathVariable String sellerId) {
-        return productService.countProductsBySellerId(sellerId);
+    public ResponseEntity<Long> countBySellerId(
+            @PathVariable
+            String sellerId
+    ) {
+        return ResponseEntity.ok(productService.countProductsBySellerId(sellerId));
     }
 
     @PostMapping
     @ApiOperation("Crear un producto")
-    public ResponseEntity<Product> addProduct(@Validated @RequestBody CreateProductDto productDto){
-        return ResponseEntity.ok(productService.addProduct(productDto));
+    public ResponseEntity<Product> addProduct(
+            @RequestBody
+            @Valid
+            CreateProductDto productDto,
+            @NotNull
+            WebRequest request
+    ) {
+        final Product product = productService.addProduct(productDto);
+        return ResponseEntity.created(
+                        ServletUriComponentsBuilder.fromCurrentRequest()
+                                .path(request.getContextPath())
+                                .build()
+                                .toUri())
+                .body(product);
     }
-
-
 
 }

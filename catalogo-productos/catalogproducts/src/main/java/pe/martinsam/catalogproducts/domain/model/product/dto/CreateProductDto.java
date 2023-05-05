@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
+import org.hibernate.validator.constraints.URL;
 import pe.martinsam.catalogproducts.domain.model.product.Category;
 import pe.martinsam.catalogproducts.domain.model.product.Product;
 import pe.martinsam.catalogproducts.domain.model.product.types.Status;
@@ -29,7 +30,7 @@ public record CreateProductDto(
         String description,
         @Size(min = 1, message = "Se debe proporcionar al menos una imagen")
         @NotEmpty(message = "El campo 'imageUrl' es obligatorio")
-        List<String> imageUrl,
+        List<@URL(message = "El campo 'imageUrl' debe ser una URL válida") String> imageUrl,
         Map<String, String> additionalProperties,
 
         @NotBlank(message = "El campo 'currency' es obligatorio")
@@ -48,24 +49,24 @@ public record CreateProductDto(
 
         Boolean isFreeShipping
 ) {
-        public Product toProduct(){
-                return Product.builder()
-                        .sellerId(this.sellerId)
-                        .name(this.name)
-                        .brand(this.brand)
-                        .model(this.model)
-                        .description(this.description)
-                        .imageUrl(this.imageUrl)
-                        .additionalProperties(this.additionalProperties)
-                        .currency(Currency.getInstance(this.currencySymbol))
-                        .price(this.price)
-                        .stock(this.stock)
-                        .categories(this.categories)
-                        .tags(this.tags)
-                        .isFreeShipping(this.isFreeShipping)
-                        .status(Status.DRAFT)
-                        .createdAt(LocalDateTime.now())
-                        .updatedAt(LocalDateTime.now())
-                        .build();
-        }
+    public Product toProduct() {
+        return Product.builder()
+                .sellerId(this.sellerId)
+                .name(this.name)
+                .brand(this.brand)
+                .model(this.model)
+                .description(this.description)
+                .imageUrl(this.imageUrl)
+                .additionalProperties(this.additionalProperties)
+                .currency(Currency.getInstance(this.currencySymbol))
+                .price(this.price)
+                .stock(this.stock)
+                .categories(this.categories)
+                .tags(this.tags)
+                .isFreeShipping(this.isFreeShipping)
+                .status(Status.DRAFT)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+    }
 }

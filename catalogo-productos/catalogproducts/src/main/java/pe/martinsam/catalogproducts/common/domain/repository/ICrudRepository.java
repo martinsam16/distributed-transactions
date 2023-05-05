@@ -1,4 +1,4 @@
-package pe.martinsam.catalogproducts.common.repository;
+package pe.martinsam.catalogproducts.common.domain.repository;
 
 import java.util.List;
 import java.util.Optional;
