@@ -6,21 +6,21 @@ import org.springframework.stereotype.Service;
 import pe.martinsam.catalogproducts.domain.model.product.event.ProductCreatedEvent;
 
 @Service
-public class ProductCreateProducer {
+public class ProductCreatedProducer {
 
     private final KafkaTemplate<String, ProductCreatedEvent> kafkaTemplate;
-    private final String prefix;
+    private final String topic;
 
-    public ProductCreateProducer(
+    public ProductCreatedProducer(
             KafkaTemplate<String, ProductCreatedEvent> kafkaTemplate,
-            @Value("${spring.kafka.topic-prefix}") String transactionIdPrefix
+            @Value("${spring.kafka.custom.product.topic}") String topic
     ) {
         this.kafkaTemplate = kafkaTemplate;
-        this.prefix = transactionIdPrefix;
+        this.topic = topic;
     }
 
     public void sendProductCreatedEvent(ProductCreatedEvent event) {
-        kafkaTemplate.send(prefix + "product-created", event.id(), event);
+        kafkaTemplate.send(topic, event.id(), event);
     }
 }
 

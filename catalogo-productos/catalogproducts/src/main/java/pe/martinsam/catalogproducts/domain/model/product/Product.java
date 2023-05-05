@@ -1,10 +1,6 @@
 package pe.martinsam.catalogproducts.domain.model.product;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import pe.martinsam.catalogproducts.domain.model.product.types.Status;
 import pe.martinsam.catalogproducts.infraestructure.persistence.entity.ProductEntity;
 
@@ -41,7 +37,9 @@ public class Product {
     private Boolean isFreeShipping;
 
     private LocalDateTime createdAt;
+    @Setter
     private LocalDateTime updatedAt;
+    @Setter
     private Status status;
 
     public ProductEntity toProductEntity() {

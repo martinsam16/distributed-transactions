@@ -8,6 +8,7 @@ import lombok.Getter;
 public enum Status {
 
     DRAFT("draft"),
+    SOLICITED("solicited"),
     PENDING("pending"),
     APPROVED("approved"),
     REJECTED("rejected"),
@@ -22,7 +23,6 @@ public enum Status {
 
     public final String value;
 
-    //from string to enum
     public static Status fromValue(String value) {
         for (Status status : Status.values()) {
             if (status.value.equals(value)) {

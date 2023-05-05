@@ -26,8 +26,10 @@ spring:
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       transaction-id-prefix: ${CLOUDKARAFKA_TOPIC_PREFIX}
-    topic-prefix: ${CLOUDKARAFKA_TOPIC_PREFIX}
     client-id: ${CLOUDKARAFKA_TOPIC_PREFIX}catalog-products-microservice
+    custom:
+      product:
+        topic: ${CLOUDKARAFKA_TOPIC_PREFIX}products
 
 springdoc:
   api-docs:
@@ -36,8 +38,11 @@ springdoc:
   swagger-ui:
     path: /swagger-ui.html
     enabled: true
+  show-actuator: true
 
 management:
+#  server:
+#    port: 3031
   endpoints:
     web:
       exposure:
