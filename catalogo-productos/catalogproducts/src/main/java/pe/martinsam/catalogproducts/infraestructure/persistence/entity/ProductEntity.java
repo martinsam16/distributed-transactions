@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import pe.martinsam.catalogproducts.application.exception.ProductException;
 import pe.martinsam.catalogproducts.domain.model.product.Category;
 import pe.martinsam.catalogproducts.domain.model.product.Product;
 
@@ -48,6 +49,20 @@ public class ProductEntity {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private String status;
+
+    public ProductEntity increaseStock(Integer quantity) {
+        this.stock += quantity;
+        return this;
+    }
+
+    public ProductEntity decreaseStock(Integer quantity) {
+        if (this.stock >= quantity) {
+            this.stock -= quantity;
+        } else {
+            throw new ProductException("Stock is not enough");
+        }
+        return this;
+    }
 
     public Product toProduct(){
         return Product.builder()

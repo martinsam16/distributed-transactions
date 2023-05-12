@@ -10,10 +10,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import pe.martinsam.catalogproducts.application.ProductService;
@@ -28,7 +25,7 @@ public class ProductPostRest {
 
     private final ProductService productService;
 
-    @PostMapping
+    @PostMapping(consumes = "application/json", produces = "application/json")
     @Operation(summary = "Crear un producto")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201",

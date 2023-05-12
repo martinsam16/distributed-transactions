@@ -2,6 +2,7 @@ package pe.martinsam.catalogproducts.application;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pe.martinsam.catalogproducts.application.exception.ProductException;
@@ -55,6 +56,14 @@ public class ProductService {
         log.info("Product created event sent: {}", savedProduct.getId());
 
         return savedProduct;
+    }
+
+    public void increaseStock(String id, Integer quantity){
+        productRepository.increaseStock(id, quantity);
+    }
+
+    public void decreaseStock(String id, Integer quantity){
+        productRepository.decreaseStock(id, quantity);
     }
 
     public Long countProducts() {

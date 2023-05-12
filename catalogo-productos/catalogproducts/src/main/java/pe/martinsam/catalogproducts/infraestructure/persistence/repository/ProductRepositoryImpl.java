@@ -57,4 +57,20 @@ public class ProductRepositoryImpl implements ProductRepository {
     public Long countBySellerId(String sellerId) {
         return productDao.countBySellerId(sellerId);
     }
+
+    @Override
+    public void increaseStock(String id, Integer quantity) {
+        productDao.findById(id).ifPresent(productEntity -> {
+            ProductEntity increasedProduct = productEntity.increaseStock(quantity);
+            productDao.save(increasedProduct);
+        });
+    }
+
+    @Override
+    public void decreaseStock(String id, Integer quantity) {
+        productDao.findById(id).ifPresent(productEntity -> {
+            ProductEntity decreasedProduct = productEntity.decreaseStock(quantity);
+            productDao.save(decreasedProduct);
+        });
+    }
 }
