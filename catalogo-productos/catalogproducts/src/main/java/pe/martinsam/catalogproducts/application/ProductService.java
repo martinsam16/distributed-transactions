@@ -5,15 +5,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pe.martinsam.catalogproducts.application.exception.ProductException;
+import pe.martinsam.catalogproducts.common.infraestructure.property.MicroserviceProperties;
 import pe.martinsam.catalogproducts.domain.model.product.Product;
 import pe.martinsam.catalogproducts.domain.model.product.dto.CreateProductDto;
 import pe.martinsam.catalogproducts.domain.model.product.dto.GetProductDto;
+import pe.martinsam.catalogproducts.domain.model.product.event.ProductChangedStatusEvent;
 import pe.martinsam.catalogproducts.domain.model.product.event.ProductCreatedEvent;
 import pe.martinsam.catalogproducts.domain.model.product.event.ProductDeletedEvent;
 import pe.martinsam.catalogproducts.domain.model.product.types.Status;
 import pe.martinsam.catalogproducts.domain.repository.ProductRepository;
-import pe.martinsam.catalogproducts.infraestructure.events.ProductCreatedProducer;
-import pe.martinsam.catalogproducts.infraestructure.events.ProductDeletedProducer;
+import pe.martinsam.catalogproducts.infraestructure.events.KafkaProductProducerGeneric;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,8 +27,12 @@ public class ProductService {
 
     private final ProductRepository productRepository;
 
-    private final ProductCreatedProducer productCreatedProducer;
-    private final ProductDeletedProducer productDeletedProducer;
+    private final KafkaProductProducerGeneric<ProductCreatedEvent> productCreatedProducer;
+    private final KafkaProductProducerGeneric<ProductDeletedEvent> productDeletedProducer;
+    private final KafkaProductProducerGeneric<ProductChangedStatusEvent> productChangedStatusProducer;
+
+
+    private final MicroserviceProperties microserviceProperties;
 
     @Transactional
     public Product addProduct(CreateProductDto productDto) {
@@ -42,8 +47,12 @@ public class ProductService {
         final Product savedProduct = productRepository.save(productDto.toProduct());
         log.info("Product saved: {}", savedProduct);
 
-        productCreatedProducer.sendProductCreatedEvent(ProductCreatedEvent.fromProduct(savedProduct));
-        log.info("Product created event sent: {}", savedProduct);
+        productCreatedProducer.sendEvent(
+                ProductCreatedEvent.fromProduct(
+                        savedProduct,
+                        microserviceProperties
+                ));
+        log.info("Product created event sent: {}", savedProduct.getId());
 
         return savedProduct;
     }
@@ -103,7 +112,7 @@ public class ProductService {
                 product.getUpdatedAt()
         )).orElseThrow(() -> {
             log.error("Product not found");
-            throw new ProductException("Product not found");
+            return new ProductException("Product not found");
         });
     }
 
@@ -120,14 +129,30 @@ public class ProductService {
         this.changeStatus(productToDelete.get(), Status.DELETED);
         log.info("Product deleted: {}", productToDelete.get().getId());
 
-        productDeletedProducer.sendProductDeletedEvent(new ProductDeletedEvent(id, productToDelete.get().getUpdatedAt()));
+        productDeletedProducer.sendEvent(
+                ProductDeletedEvent.fromProduct(
+                        productToDelete.get(),
+                        microserviceProperties
+                ));
         log.info("Product deleted event sent: {}", productToDelete.get());
     }
 
-    private void changeStatus(Product product, Status status) {
+    @Transactional
+    public void changeStatus(Product product, Status status) {
+        Status from = product.getStatus();
         product.setStatus(status);
         product.setUpdatedAt(LocalDateTime.now());
         productRepository.save(product);
         log.info("Product status changed: {}", product);
+
+        productChangedStatusProducer.sendEvent(
+                ProductChangedStatusEvent.fromProduct(
+                        product,
+                        from,
+                        status,
+                        microserviceProperties
+                ));
+        log.info("Product changed status event sent: {}", product);
+
     }
 }

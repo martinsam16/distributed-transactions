@@ -4,6 +4,8 @@ server:
 spring:
   application:
     name: Catalog Products Microservice
+    id: catalog-products-microservice
+    schema: http-rest-microservices
     description: Microservice for catalog products
     version: 1.0.0
     author: Martin Saman

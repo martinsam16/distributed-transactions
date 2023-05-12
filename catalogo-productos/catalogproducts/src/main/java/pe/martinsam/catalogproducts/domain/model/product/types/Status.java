@@ -7,21 +7,23 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum Status {
 
-    DRAFT("draft"),
-    SOLICITED("solicited"),
-    PENDING("pending"),
-    APPROVED("approved"),
-    REJECTED("rejected"),
-    PUBLISHED("published"),
-    UNPUBLISHED("unpublished"),
-    ARCHIVED("archived"),
-    UNARCHIVED("unarchived"),
-    DELETED("deleted"),
-    LAST_UNITS("last_units"),
-    LAST_AVAILABLE("last_available"),
-    SOLD_OUT("sold_out");
+    DELETED("deleted", -1),
+    DRAFT("draft", 0),
+    SOLICITED("solicited", 1),
+    PENDING("pending", 2),
+    APPROVED("approved", 3),
+    REJECTED("rejected", -3),
+    PUBLISHED("published", 4),
+    UNPUBLISHED("unpublished", -4),
+
+
+
+    LAST_UNITS("last_units", 5),
+    LAST_AVAILABLE("last_available", 6),
+    SOLD_OUT("sold_out", 7);
 
     public final String value;
+    public final Integer phase;
 
     public static Status fromValue(String value) {
         for (Status status : Status.values()) {

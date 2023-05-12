@@ -30,13 +30,14 @@ public class ProductDeleteRest {
             @ApiResponse(responseCode = "409",
                     description = "Conflict",
                     content = @Content(mediaType = "application/json",
-                            examples = @ExampleObject(value = "{\n" +
-                                    "  \"timestamp\": \"2023-05-05T07:53:09.038118\",\n" +
-                                    "  \"status\": 409,\n" +
-                                    "  \"error\": \"Product not found\",\n" +
-                                    "  \"message\": \"Product not found\",\n" +
-                                    "  \"path\": \"/api/v1/products/6454deb19ff38211c5c107aa\"\n" +
-                                    "}"))
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "timestamp": "2023-05-05T07:53:09.038118",
+                                      "status": 409,
+                                      "error": "Product not found",
+                                      "message": "Product not found",
+                                      "path": "/api/v1/products/6454deb19ff38211c5c107aa"
+                                    }"""))
             )
     })
     public ResponseEntity<Void> deleteProduct(@PathVariable String id) {

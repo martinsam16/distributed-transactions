@@ -1,49 +1,52 @@
 package pe.martinsam.catalogproducts.domain.model.product.event;
 
+import jakarta.validation.constraints.NotNull;
+import pe.martinsam.catalogproducts.common.infraestructure.property.MicroserviceProperties;
 import pe.martinsam.catalogproducts.domain.model.product.Category;
 import pe.martinsam.catalogproducts.domain.model.product.Product;
+import pe.martinsam.catalogproducts.domain.model.product.event.payload.ProductCreatedPayload;
+import pe.martinsam.catalogproducts.domain.model.product.event.types.ProductEventType;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
+import java.util.UUID;
 
-public record ProductCreatedEvent(String id,
-                                  String sellerId,
-                                  String name,
-                                  String brand,
-                                  String model,
-                                  String description,
-                                  List<String> imageUrl,
-                                  Map<String, String> additionalProperties,
-                                  String currencySymbol,
-                                  BigDecimal price,
-                                  Integer stock,
-                                  List<String> categories,
-                                  List<String> tags,
-                                  Boolean isFreeShipping,
-                                  LocalDateTime createdAt,
-                                  LocalDateTime updatedAt,
-                                  String status) {
-    public static ProductCreatedEvent fromProduct(Product entity){
+public record ProductCreatedEvent(ProductEventType type,
+                                  String eventId,
+                                  String occurredOn,
+                                  String version,
+                                  String schema,
+                                  String eventSource,
+                                  ProductCreatedPayload payload
+) implements IBaseProductEvent {
+
+    public static ProductCreatedEvent fromProduct(
+            @NotNull Product product,
+            @NotNull MicroserviceProperties microserviceProperties
+    ) {
         return new ProductCreatedEvent(
-                entity.getId(),
-                entity.getSellerId(),
-                entity.getName(),
-                entity.getBrand(),
-                entity.getModel(),
-                entity.getDescription(),
-                entity.getImageUrl(),
-                entity.getAdditionalProperties(),
-                entity.getCurrency().getCurrencyCode(),
-                entity.getPrice(),
-                entity.getStock(),
-                entity.getCategories().stream().map(Category::getId).toList(),
-                entity.getTags(),
-                entity.getIsFreeShipping(),
-                entity.getCreatedAt(),
-                entity.getUpdatedAt(),
-                entity.getStatus().getValue()
-        );
+                ProductEventType.PRODUCT_CREATED,
+                UUID.randomUUID().toString(),
+                product.getCreatedAt().toString(),
+                microserviceProperties.getVersion(),
+                microserviceProperties.getSchema(),
+                microserviceProperties.getId(),
+                new ProductCreatedPayload(
+                        product.getId(),
+                        product.getSellerId(),
+                        product.getName(),
+                        product.getBrand(),
+                        product.getModel(),
+                        product.getDescription(),
+                        product.getImageUrl(),
+                        product.getAdditionalProperties(),
+                        product.getCurrency().getCurrencyCode(),
+                        product.getPrice(),
+                        product.getStock(),
+                        product.getCategories().stream().map(Category::getId).toList(),
+                        product.getTags(),
+                        product.getIsFreeShipping(),
+                        product.getCreatedAt(),
+                        product.getUpdatedAt(),
+                        product.getStatus().getValue()
+                ));
     }
 }
