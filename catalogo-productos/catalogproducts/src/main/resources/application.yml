@@ -1,0 +1,73 @@
+server:
+  port: 3030
+
+spring:
+  application:
+    name: Catalog Products Microservice
+    id: catalog-products-microservice
+    schema: http-rest-microservices
+    description: Microservice for catalog products
+    version: 1.0.0
+    author: Martin Saman
+  data:
+    mongodb:
+      uri: mongodb+srv://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@clusterfree.fvpary6.mongodb.net/?retryWrites=true&w=majority
+      ssl-enabled: true
+      database: ${MONGODB_DATABASE}
+  kafka:
+    bootstrap-servers: ${CLOUDKARAFKA_BROKERS}
+    jaas:
+      enabled: true
+    properties:
+      sasl:
+        mechanism: SCRAM-SHA-512
+        jaas.config: org.apache.kafka.common.security.scram.ScramLoginModule required username="${CLOUDKARAFKA_USERNAME}" password="${CLOUDKARAFKA_PASSWORD}";
+      security:
+        protocol: SASL_SSL
+    producer:
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      transaction-id-prefix: ${CLOUDKARAFKA_TOPIC_PREFIX}
+    client-id: ${CLOUDKARAFKA_TOPIC_PREFIX}catalog-products-microservice
+    custom:
+      product:
+        topic: ${CLOUDKARAFKA_TOPIC_PREFIX}products
+
+springdoc:
+  api-docs:
+    path: /api-docs
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+  show-actuator: true
+
+management:
+#  server:
+#    port: 3031
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics, prometheus, readiness, liveness
+  endpoint:
+    health:
+      show-details: always
+      group:
+        readiness:
+          include: mongo, kafka
+        liveness:
+          include: livenessState
+      probes:
+        enabled: true
+      status:
+        http-mapping:
+          DOWN: 503
+        order:
+          - UP
+          - OUT_OF_SERVICE
+          - DOWN
+      components:
+        mongo:
+          enabled: true
+        kafka:
+          enabled: true
